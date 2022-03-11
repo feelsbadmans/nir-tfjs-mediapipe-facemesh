@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-bg-1);
+}
+
+body * {
+  font-family: Jost;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+:root {
+  --color-bg-1: #1b1b1b;
+  --color-bg-2: #000000;
+  --color-bg-3: #ffa31a;
+  
+  --color-text-1: #ffffff;
+  --color-text-2: #6a6a6a;
+  --color-text-3: #000000;
+
+  --color-orange-add: #ff9000;
+  --color-grey-add: #444444;
+} 

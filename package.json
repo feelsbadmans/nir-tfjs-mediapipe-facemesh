@@ -1,0 +1,54 @@
+{
+  "name": "tmm-homework",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "prettier": "^2.5.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-router-dom": "^6.2.2",
+    "react-scripts": "5.0.0",
+    "sass": "^1.49.9",
+    "stylelint": "^14.5.3",
+    "stylelint-scss": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^12.20.46",
+    "@types/react": "^16.14.23",
+    "@types/react-dom": "^16.9.14",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.1.0",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-standard": "^5.0.0",
+    "typed-scss-modules": "^6.2.0",
+    "typescript": "^4.3.5"
+  },
+  "scripts": {
+    "start": "react-scripts start & yarn css:types",
+    "build": "react-scripts build",
+    "css:types": "typed-scss-modules -w src --exportType default",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
