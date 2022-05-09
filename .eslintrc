@@ -6,11 +6,6 @@
   "plugins": ["@typescript-eslint", "react", "standard", "react-hooks", "import", "simple-import-sort"],
   "extends": [
     "prettier",
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/eslint-recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:import/errors",
     "plugin:import/warnings",
     "plugin:import/typescript",
@@ -23,32 +18,32 @@
     "tsconfigRootDir": "."
   },
   "rules": {
-    "newline-before-return": "error",
-    "default-case": "error",
-    "eslint-comments/no-unused-disable": "error",
-    "eslint-comments/no-use": "error",
-    "no-debugger": "error",
-    "prefer-const": "error",
-    "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "error",
-    "no-console": [
-      "warn",
-      {
-        "allow": ["error"]
-      }
-    ],
-    "no-unused-expressions": "error",
-    "react/prop-types": "off",
-    "react/display-name": "off",
-    "@typescript-eslint/explicit-function-return-type": "off",
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/no-empty-interface": "error",
-    "@typescript-eslint/no-explicit-any": "error",
-    "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-unused-vars": "error",
-    "import/no-duplicates": "error",
+    // "newline-before-return": "error",
+    // "default-case": "error",
+    // "eslint-comments/no-unused-disable": "error",
+    // "eslint-comments/no-use": "error",
+    // "no-debugger": "error",
+    // "prefer-const": "error",
+    // "react-hooks/rules-of-hooks": "error",
+    // "react-hooks/exhaustive-deps": "error",
+    // "no-console": [
+    //   "warn",
+    //   {
+    //     "allow": ["error"]
+    //   }
+    // ],
+    // "no-unused-expressions": "error",
+    // "react/prop-types": "off",
+    // "react/display-name": "off",
+    // "@typescript-eslint/explicit-function-return-type": "off",
+    // "@typescript-eslint/no-empty-function": "off",
+    // "@typescript-eslint/no-empty-interface": "error",
+    // "@typescript-eslint/no-explicit-any": "error",
+    // "@typescript-eslint/explicit-module-boundary-types": "off",
+    // "@typescript-eslint/no-unused-vars": "error",
+    // "import/no-duplicates": "error",
     "import/no-unresolved": "off",
-    "simple-import-sort/exports": "error",
+    // "simple-import-sort/exports": "error",
     "simple-import-sort/imports": [
       "error",
       {
