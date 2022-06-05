@@ -9,16 +9,16 @@
 
 // Face Mesh - https://github.com/tensorflow/tfjs-models/tree/master/facemesh
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import * as facemesh from '@tensorflow-models/face-landmarks-detection';
 import { MediaPipeFaceMesh } from '@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh';
-import { entries } from 'FacePaint/entries';
 import { FacePaint } from 'FacePaint/FacePaint';
 
 import '@tensorflow/tfjs-backend-webgl';
 
-import { drawMesh, Rect } from './utils';
+import { entries } from './entries';
+import { drawMesh } from './utils';
 
 import './App.css';
 
@@ -28,58 +28,17 @@ const height = 480;
 export const App = () => {
   const webcamRef = useRef<Webcam>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasDotsRef = useRef<HTMLCanvasElement>(null);
   const faceCanvasRef = useRef<FacePaint | null>(null);
 
   const interval = useRef<NodeJS.Timeout | null>(null);
   const [isRunning, setIsRunning] = useState(false);
   const [indexMask, setIndexMask] = useState(0);
-
-  //  Load posenet
-  const runFacemesh = useCallback(
-    async (fl: boolean) => {
-      if (fl) {
-        const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh, {});
-        if (!faceCanvasRef.current) {
-          faceCanvasRef.current = new FacePaint({
-            ctx: canvasRef.current,
-            textureFilePath: entries[indexMask].entry,
-            w: width,
-            h: height,
-          });
-        }
-
-        setIsRunning(true);
-
-        interval.current = setInterval(() => {
-          detect(net);
-        }, 0);
-      } else {
-        if (interval.current) {
-          clearInterval(interval.current);
-          setTimeout(() => {
-            setIsRunning(false);
-          }, 100);
-        }
-      }
-    },
-    [indexMask],
-  );
-
-  const rect = useRef<Rect>({
-    top: [320, 0],
-    bottom: [320, 480],
-    right: [0, 240],
-    left: [640, 240],
-  });
-
-  const handleSetRect = (newRect: Rect) => {
-    // console.log({rect});
-    rect.current = newRect;
-  };
+  const [showDots, setShowDots] = useState(false);
 
   const detect = useCallback(
     async (net: MediaPipeFaceMesh) => {
-      if (webcamRef.current && webcamRef.current.video && canvasRef.current) {
+      if (webcamRef.current && webcamRef.current.video && canvasRef.current && canvasDotsRef.current) {
         // Get Video Properties
         const video = webcamRef.current.video;
         const videoWidth = webcamRef.current.video.videoWidth;
@@ -93,17 +52,52 @@ export const App = () => {
         canvasRef.current.width = videoWidth;
         canvasRef.current.height = videoHeight;
 
+        canvasDotsRef.current.width = videoWidth;
+        canvasDotsRef.current.height = videoHeight;
+        const ctx = canvasDotsRef.current.getContext('2d');
         // Make Detections
         const face = await net.estimateFaces({ input: video });
         // Get canvas context
         requestAnimationFrame(() => {
-          if (faceCanvasRef.current) {
-            drawMesh(face, faceCanvasRef.current, rect.current, handleSetRect);
+          if (showDots) {
+            drawMesh({ predictions: face, showDots, ctx });
+          } else if (faceCanvasRef.current) {
+            drawMesh({ predictions: face, faceCanvas: faceCanvasRef.current });
           }
         });
       }
     },
-    [faceCanvasRef.current],
+    [showDots],
+  );
+
+  const runFacemesh = useCallback(
+    async (fl: boolean) => {
+      if (fl) {
+        const net = await facemesh.load(facemesh.SupportedPackages.mediapipeFacemesh, {});
+        if (!faceCanvasRef.current && canvasRef.current) {
+          faceCanvasRef.current = new FacePaint({
+            ctx: canvasRef.current,
+            textureFilePath: entries[indexMask].entry,
+            w: width,
+            h: height,
+          });
+        }
+
+        setIsRunning(true);
+
+        interval.current = setInterval(() => {
+          detect(net);
+        }, 0.0001);
+      } else {
+        if (interval.current) {
+          clearInterval(interval.current);
+          setTimeout(() => {
+            setIsRunning(false);
+          }, 100);
+        }
+      }
+    },
+    [indexMask, detect],
   );
 
   const [flag, setFlag] = useState(false);
@@ -113,8 +107,18 @@ export const App = () => {
   }, [flag, runFacemesh]);
 
   useEffect(() => {
+    if (interval.current) {
+      clearInterval(interval.current);
+    }
+  }, [showDots]);
+
+  useEffect(() => {
     faceCanvasRef.current?.updateTexture(entries[indexMask].entry);
   }, [indexMask]);
+
+  const visibilityFaceMask = useMemo(() => (isRunning && !showDots ? 'visible' : 'hidden'), [isRunning, showDots]);
+
+  const visibilityDots = useMemo(() => (isRunning && showDots ? 'visible' : 'hidden'), [isRunning, showDots]);
 
   return (
     <div className="App">
@@ -123,10 +127,6 @@ export const App = () => {
           ref={webcamRef}
           style={{
             position: 'absolute',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            left: 0,
-            right: 0,
             textAlign: 'center',
             zIndex: 9,
             width,
@@ -139,32 +139,52 @@ export const App = () => {
           ref={canvasRef}
           style={{
             position: 'absolute',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            left: 0,
-            right: 0,
             textAlign: 'center',
             zIndex: 9,
             width,
             height,
-            visibility: isRunning ? 'visible' : 'hidden',
+            visibility: visibilityFaceMask,
+          }}
+        />
+        <canvas
+          id="FaceDots"
+          ref={canvasDotsRef}
+          style={{
+            position: 'absolute',
+            textAlign: 'center',
+            zIndex: 20,
+            width,
+            height,
+            visibility: visibilityDots,
           }}
         />
       </article>
 
-      <button
-        onClick={() => {
-          setFlag((prev) => !prev);
-        }}
-        className={'button'}
-      >
-        {flag ? 'STOP' : 'RUN'}
-      </button>
-      <select onChange={(e) => setIndexMask(Number(e.target.value))}>
-        {entries.map((v, i) => (
-          <option value={i} key={v.handle}>{v.handle}</option>
-        ))}
-      </select>
+      <div className="options-container">
+        <button
+          onClick={() => {
+            setFlag((prev) => !prev);
+          }}
+          className="button"
+        >
+          {flag ? 'Остановить' : 'Запустить'}
+        </button>
+        <button
+          onClick={() => {
+            setShowDots((prev) => !prev);
+          }}
+          className="button"
+        >
+          Скрыть/показать точки
+        </button>
+        <select onChange={(e) => setIndexMask(Number(e.target.value))} className="select">
+          {entries.map((v, i) => (
+            <option value={i} key={v.handle}>
+              {v.handle}
+            </option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };

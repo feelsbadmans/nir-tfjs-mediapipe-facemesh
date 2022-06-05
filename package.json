@@ -6,6 +6,7 @@
     "@tensorflow-models/face-landmarks-detection": "^0.0.3",
     "@tensorflow-models/facemesh": "^0.0.5",
     "@tensorflow/tfjs": "^3.14.0",
+    "@types/three": "^0.141.0",
     "prettier": "^2.5.1",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

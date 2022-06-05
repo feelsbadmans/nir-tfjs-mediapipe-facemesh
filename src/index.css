@@ -7,6 +7,12 @@ body {
 
 body * {
   font-family: Jost;
+  box-sizing: border-box;
+}
+
+button, select {
+  box-shadow: none;
+  outline: none;
 }
 
 code {
