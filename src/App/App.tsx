@@ -14,6 +14,7 @@ import Webcam from 'react-webcam';
 import * as facemesh from '@tensorflow-models/face-landmarks-detection';
 import { MediaPipeFaceMesh } from '@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh';
 import { FacePaint } from 'FacePaint/FacePaint';
+import { buildGlasses } from 'FacePaint/glasses';
 
 import '@tensorflow/tfjs-backend-webgl';
 
@@ -175,7 +176,15 @@ export const App = () => {
           }}
           className="button"
         >
-          Скрыть/показать точки
+          Скрыть/показать лицевые точки
+        </button>
+        <button
+          onClick={() => {
+            faceCanvasRef.current?.toggleGlasses();
+          }}
+          className="button"
+        >
+          Скрыть/показать очки
         </button>
         <select onChange={(e) => setIndexMask(Number(e.target.value))} className="select">
           {entries.map((v, i) => (

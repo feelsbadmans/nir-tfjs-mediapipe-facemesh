@@ -47,25 +47,47 @@ type DrawMeshOptions = {
   ctx?: CanvasRenderingContext2D | null;
 };
 
+type RightPredictions = AnnotatedPrediction & {
+  annotations: {
+    [key: string]: number[][];
+  };
+};
+
+const getAngle = (v1: number[], v2: number[]) => {
+  const scal = v1[0] * v2[0] + v1[1] * v2[1];
+  const len = Math.sqrt((v1[0] ** 2 + v1[1] ** 2) * (v2[0] ** 2 + v2[1] ** 2));
+
+  return Math.acos(scal / len);
+};
+
+const getRotatinos = (left: number[], right: number[], top: number[], bottom: number[], a: number[], b: number[]): number[] => {
+  const x = getAngle([top[1] - bottom[1], top[2] - bottom[2]], [0, 1]);
+  const y = getAngle([left[0] - right[0], left[1] - right[1]], [0, 1]);
+  const z = getAngle([left[0] - right[0], left[2] - right[2]], [0, 1]);
+
+  return [x, y, z];
+};
+
 const normalize = (pos: number[]) => {
-  return [pos[0] - 8, pos[1] + 220, pos[2] - 500];
+  return [pos[0] + 2, pos[1] + 10, pos[2] - 600];
 };
-
-const normalizePos = (pos: number[], canvas: HTMLCanvasElement) => {
-  return [pos[0] - canvas.offsetLeft / 2, pos[1] + canvas.offsetTop, pos[2]];
-};
-
 // Drawing Mesh
 export const drawMesh = ({ predictions, faceCanvas, showDots, ctx }: DrawMeshOptions) => {
   if (predictions.length > 0) {
     predictions.forEach((prediction) => {
       const keypoints = prediction.scaledMesh as number[][];
+      const top = keypoints[9];
+      const bottom = keypoints[8];
+      const left = keypoints[69];
+      const right = keypoints[299];
+      const rotations = getRotatinos(left, right, top, bottom, keypoints[226], keypoints[97]);
 
       if (showDots && ctx) {
         drawDots(prediction.scaledMesh as Coords3D, ctx);
       } else if (faceCanvas) {
-        const points = keypoints.reduce<number[]>((acc, pos, i) => acc.concat(pos), []);
-        faceCanvas.render(points);
+        const points = keypoints.reduce<number[]>((acc, pos, i) => acc.concat(normalize(pos)), []);
+        const nose = [keypoints[6], keypoints[168]];
+        faceCanvas.render(points, nose, rotations);
       }
     });
   }
