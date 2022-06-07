@@ -14,7 +14,6 @@ import Webcam from 'react-webcam';
 import * as facemesh from '@tensorflow-models/face-landmarks-detection';
 import { MediaPipeFaceMesh } from '@tensorflow-models/face-landmarks-detection/dist/mediapipe-facemesh';
 import { FacePaint } from 'FacePaint/FacePaint';
-import { buildGlasses } from 'FacePaint/glasses';
 
 import '@tensorflow/tfjs-backend-webgl';
 

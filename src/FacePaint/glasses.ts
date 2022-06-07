@@ -11,7 +11,7 @@ export const buildGlasses = () => {
   loader.load(require('assets/Glasses.obj'), (glassesObj) => {
     glassesObj.scale.set(1, 1, 1);
     glassesObj.rotation.set(0, 1.35 + Math.PI, 2 * Math.PI - 0.04);
-    glassesObj.position.set(-40, 63, 6);
+    glassesObj.position.set(-45, 63, 6);
     glassesObj.renderOrder = 1;
     glasses.add(glassesObj);
     const material = new THREE.MeshBasicMaterial();
